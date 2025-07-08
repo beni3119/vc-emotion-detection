@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 import yaml
 import logging
 
@@ -76,10 +76,11 @@ except Exception as e:
     logger.error("Failed to prepare data.")
     raise
 
-def apply_bow(X_train, X_test, max_features):
+def apply_tfidf(X_train, X_test, max_features):
+    # Apply TF-IDF Vectorization
     try:
         logger.info("Applying Bag of Words (CountVectorizer)...")
-        vectorizer = CountVectorizer(max_features=max_features)
+        vectorizer = TfidfVectorizer(max_features=max_features)
         X_train_bow = vectorizer.fit_transform(X_train)
         X_test_bow = vectorizer.transform(X_test)
         logger.info("BoW transformation complete.")
@@ -89,7 +90,7 @@ def apply_bow(X_train, X_test, max_features):
         raise
 
 try:
-    X_train_bow, X_test_bow = apply_bow(X_train, X_test, max_features)
+    X_train_bow, X_test_bow = apply_tfidf(X_train, X_test, max_features)
 except Exception as e:
     logger.error("Failed to apply BoW.")
     raise
@@ -119,8 +120,8 @@ def store_bow_data(train_df, test_df, data_path="data/features"):
     try:
         logger.info(f"Storing BoW data to {data_path}...")
         os.makedirs(data_path, exist_ok=True)
-        train_df.to_csv(os.path.join(data_path, "train_bow.csv"), index=False)
-        test_df.to_csv(os.path.join(data_path, "test_bow.csv"), index=False)
+        train_df.to_csv(os.path.join(data_path, "train_tfidf.csv"), index=False)
+        test_df.to_csv(os.path.join(data_path, "test_tfidf.csv"), index=False)
         logger.info("BoW data stored successfully.")
     except Exception as e:
         logger.error(f"Error storing BoW data: {e}")
